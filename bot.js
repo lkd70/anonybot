@@ -16,12 +16,12 @@ bot.context.db.groups.loadDatabase();
 
 bot.use(args());
 
-bot.help(commands.creator.helpCommand());
-bot.start(commands.creator.helpCommand());
+bot.help(commands.helpCommand());
+bot.start(commands.helpCommand());
 
-bot.command('create', commands.creator.createCommand());
-bot.command('join', commands.creator.joinCommand());
-bot.command('info', commands.creator.infoCommand());
+bot.command('create', commands.createCommand());
+bot.command('join', commands.joinCommand());
+bot.command('info', commands.infoCommand());
 
 bot.on('text', ctx => {
     ctx.deleteMessage().catch(() => ctx.reply('Make this bot admin to auto-manage messages: Requires `delete messages` permission'));

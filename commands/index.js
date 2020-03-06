@@ -1,9 +1,13 @@
 'use strict';
 
-const creator = require('./creator');
-const member = require('./member');
+const helpCommand = require('./help');
+const createCommand = require('./create');
+const joinCommand = require('./join');
+const infoCommand = require('./info');
 
 module.exports = {
-    creator,
-    member,
-}
+    helpCommand,
+    createCommand,
+    joinCommand,
+    infoCommand,
+};

@@ -1,9 +1,8 @@
 'use strict';
 
 const {
-    findNewBoardUID,
     findUniqueName
-} = require('../../utils/db');
+} = require('../utils/db');
 
 module.exports = () => ctx => {
     if (!['group', 'supergroup'].includes(ctx.update.message.chat.type)) {
