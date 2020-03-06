@@ -35,7 +35,6 @@ const getMeFakeName = (db, group_id) => new Promise(resolve => {
     db.findOne({
         group_id: group_id
     }, (err, doc) => {
-        if (err) console.log(err);
         resolve(doc);
     })
 });

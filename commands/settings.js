@@ -1,1 +1,1 @@
-// settings for current board hash.
+'use strict';

@@ -37,7 +37,7 @@ bot.on('text', ctx => {
         }, (err, groupDocs) => groupDocs.forEach(group =>
             bot.telegram.sendMessage(
                 group.group_id,
-                `*[${owner.fake_name}]* - ${message}`, Extra.markdown())
+                `*[${owner}]* - ${message}`, Extra.markdown())
         ));
     });
 });
@@ -54,7 +54,7 @@ bot.on('photo', ctx => {
         bot.context.db.groups.find({
             boardUID: boardUID
         }, (err, groupDocs) => groupDocs.forEach(group => 
-            bot.telegram.sendPhoto(group.group_id, img.file_id, Extra.caption(`From: ${owner.fake_name}`))
+            bot.telegram.sendPhoto(group.group_id, img.file_id, Extra.caption(`From: ${owner}`))
         ));
     });
 });
@@ -71,7 +71,7 @@ bot.on('animation', ctx => {
         bot.context.db.groups.find({
             boardUID: boardUID
         }, (err, groupDocs) => groupDocs.forEach(group =>
-            bot.telegram.sendAnimation(group.group_id, anim, Extra.caption(`From: ${owner.fake_name}`))
+            bot.telegram.sendAnimation(group.group_id, anim, Extra.caption(`From: ${owner}`))
         ));
     });
 });
@@ -88,7 +88,7 @@ bot.on('video', ctx => {
         bot.context.db.groups.find({
             boardUID: boardUID
         }, (err, groupDocs) => groupDocs.forEach(group =>
-            bot.telegram.sendVideo(group.group_id, vid.file_id, Extra.caption(`From: ${owner.fake_name}`))
+            bot.telegram.sendVideo(group.group_id, vid.file_id, Extra.caption(`From: ${owner}`))
         ));
     });
 });
@@ -106,7 +106,7 @@ bot.on('sticker', ctx => {
             boardUID: boardUID
         }, (err, groupDocs) => groupDocs.forEach(group =>
             bot.telegram.sendSticker(group.group_id, sticker.file_id).then(c => {
-                bot.telegram.sendMessage(group.group_id, `From: ${owner.fake_name}`, Extra.inReplyTo(c.message_id));
+                bot.telegram.sendMessage(group.group_id, `From: ${owner}`, Extra.inReplyTo(c.message_id));
             })
         ));
     });

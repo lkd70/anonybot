@@ -1,6 +1,7 @@
 'use strict';
 
-const { findNewBoardUID, findUniqueName } = require('../utils/db');
+const { findNewBoardUID } = require('../utils/db');
+const { getRandomName } = require('../utils/names');
 
 module.exports = () => ctx => {
     if (ctx.update.message.chat.type !== 'supergroup') {
@@ -18,6 +19,7 @@ module.exports = () => ctx => {
         } else {
             const [board, ...parts] = ctx.state.command.args;
             const desc = parts.join(' ');
+            const fake_name = getRandomName();
             
             ctx.db.groups.findOne({ group_id: group_id }, (err, doc) => {
                 if (doc === null) {
@@ -26,23 +28,18 @@ module.exports = () => ctx => {
                         ctx.db.boards.insert({
                             uid,
                             board,
-                            desc
+                            desc,
+                            creator: fake_name
                         }, (err, newDoc) => {
-                            findUniqueName(ctx.db.groups, uid).then(fake_name => {
-                                ctx.db.groups.insert({
-                                    group_id,
-                                    owner: {
-                                        username: ctx.update.message.from.username,
-                                        id: ctx.update.message.from.id,
-                                        fake_name
-                                    },
-                                    boardUID: uid
-                                }, (err, newGroup) => {
-                                    ctx.replyWithMarkdown(`Done! Your new board '*${board}*' is now ready` +
-                                        `\n\nYour unique name is: '${fake_name}'` +
-                                        `\n\nShare your board with others using this unique ID: \`${uid}\`.` +
-                                        `\nThey can start chatting anonymously by using the \`/join\` command`);
-                                });
+                            ctx.db.groups.insert({
+                                group_id,
+                                owner: fake_name,
+                                boardUID: uid
+                            }, (err, newGroup) => {
+                                ctx.replyWithMarkdown(`Done! Your new board '*${board}*' is now ready` +
+                                    `\n\nYour unique name is: '${fake_name}'` +
+                                    `\n\nShare your board with others using this unique ID: \`${uid}\`.` +
+                                    `\nThey can start chatting anonymously by using the \`/join\` command`);
                             });
                         });
                     });

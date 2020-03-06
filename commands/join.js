@@ -30,11 +30,7 @@ module.exports = () => ctx => {
                             findUniqueName(ctx.db.groups, hash).then(fake_name => {
                                 ctx.db.groups.insert({
                                     group_id,
-                                    owner: {
-                                        username: ctx.update.message.from.username,
-                                        id: ctx.update.message.from.id,
-                                        fake_name
-                                    },
+                                    owner: fake_name,
                                     boardUID: hash
                                 }, (err, newGroup) => {
                                     ctx.replyWithMarkdown(`Welcome to '*${boardDoc.board}*'` +
