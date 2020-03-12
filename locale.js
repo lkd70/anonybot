@@ -73,6 +73,14 @@ Please create a new group for a new board...`,
 Reminder: This group should only contain yourself and me. This is for your anonymity`,
 
 
+    // midduleware/added.js
+    added_too_many_members: `Only yourself and I can be in this group...
+Please remove all others and re-add me, Cya!`,
+
+    added_back: `I'm back!
+It seems this group is already setup with this bot, awesome!
+Type /info for more`,
+
 
 
     

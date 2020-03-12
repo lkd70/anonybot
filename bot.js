@@ -1,9 +1,8 @@
-const Telegraf = require('telegraf');
-const Extra = require('telegraf/extra');
+'use strict';
 require('dotenv').config();
-const commands = require('./commands');
+const Telegraf = require('telegraf');
+const commands = require('./handlers/commands');
 const Datastore = require('nedb');
-const { getMeFakeName } = require('./utils/db');
 const locale = require('./locale');
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
@@ -14,13 +13,11 @@ bot.context.db.groups = new Datastore('./store/groups.db');
 bot.context.db.boards.loadDatabase();
 bot.context.db.groups.loadDatabase();
 
-if (!('locale' in process.env)) {
-    bot.context.strings = locale.EN;
+if ('locale' in process.env) {
+	bot.context.strings = locale[process.env.locale];
 } else {
-    bot.context.strings = locale[process.env.locale];
+	bot.context.strings = locale.EN;
 }
-
-bot.use(require('./middleware'));
 
 bot.help(commands.helpCommand());
 bot.start(commands.helpCommand());
@@ -29,93 +26,7 @@ bot.command('create', commands.createCommand());
 bot.command('join', commands.joinCommand());
 bot.command('info', commands.infoCommand());
 
-bot.on('text', ctx => {
-    ctx.deleteMessage().catch(() => ctx.reply('Make this bot admin to auto-manage messages.'));
-    const message = ctx.update.message.text;
-    const group_id = ctx.update.message.chat.id;
-    getMeFakeName(bot.context.db.groups, group_id).then(doc => {
-        const {
-            owner,
-            boardUID
-        } = doc;
-        bot.context.db.groups.find({
-            boardUID: boardUID
-        }, (err, groupDocs) => groupDocs.forEach(group =>
-            bot.telegram.sendMessage(
-                group.group_id,
-                `*[${owner}]* - ${message}`, Extra.markdown())
-        ));
-    });
-});
-
-bot.on('photo', ctx => {
-    ctx.deleteMessage().catch(() => ctx.reply('Make this bot admin to auto-manage messages: Requires `delete messages` permission'));
-    const img = ctx.update.message.photo[ctx.update.message.photo.length-1];
-    const group_id = ctx.update.message.chat.id;
-    getMeFakeName(bot.context.db.groups, group_id).then(doc => {
-        const {
-            owner,
-            boardUID
-        } = doc;
-        bot.context.db.groups.find({
-            boardUID: boardUID
-        }, (err, groupDocs) => groupDocs.forEach(group => 
-            bot.telegram.sendPhoto(group.group_id, img.file_id, Extra.caption(`From: ${owner}`))
-        ));
-    });
-});
-
-bot.on('animation', ctx => {
-    ctx.deleteMessage().catch(() => ctx.reply('Make this bot admin to auto-manage messages: Requires `delete messages` permission'));
-    const anim = ctx.update.message.animation.file_id;
-    const group_id = ctx.update.message.chat.id;
-    getMeFakeName(bot.context.db.groups, group_id).then(doc => {
-        const {
-            owner,
-            boardUID
-        } = doc;
-        bot.context.db.groups.find({
-            boardUID: boardUID
-        }, (err, groupDocs) => groupDocs.forEach(group =>
-            bot.telegram.sendAnimation(group.group_id, anim, Extra.caption(`From: ${owner}`))
-        ));
-    });
-});
-
-bot.on('video', ctx => {
-    ctx.deleteMessage().catch(() => ctx.reply('Make this bot admin to auto-manage messages: Requires `delete messages` permission'));
-    const vid = ctx.update.message.video;
-    const group_id = ctx.update.message.chat.id;
-    getMeFakeName(bot.context.db.groups, group_id).then(doc => {
-        const {
-            owner,
-            boardUID
-        } = doc;
-        bot.context.db.groups.find({
-            boardUID: boardUID
-        }, (err, groupDocs) => groupDocs.forEach(group =>
-            bot.telegram.sendVideo(group.group_id, vid.file_id, Extra.caption(`From: ${owner}`))
-        ));
-    });
-});
-
-bot.on('sticker', ctx => {
-    ctx.deleteMessage().catch(() => ctx.reply('Make this bot admin to auto-manage messages: Requires `delete messages` permission'));
-    const sticker = ctx.update.message.sticker;
-    const group_id = ctx.update.message.chat.id;
-    getMeFakeName(bot.context.db.groups, group_id).then(doc => {
-        const {
-            owner,
-            boardUID
-        } = doc;
-        bot.context.db.groups.find({
-            boardUID: boardUID
-        }, (err, groupDocs) => groupDocs.forEach(group =>
-            bot.telegram.sendSticker(group.group_id, sticker.file_id).then(c => {
-                bot.telegram.sendMessage(group.group_id, `From: ${owner}`, Extra.inReplyTo(c.message_id));
-            })
-        ));
-    });
-});
+bot.use(require('./handlers/middleware'));
+bot.use(require('./handlers/messages'));
 
 bot.launch();

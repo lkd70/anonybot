@@ -1,6 +1,4 @@
 'use strict';
 
-module.exports = [].concat.apply([], [
-  require('./included/adjectiveHeroes'),
-  require('./included/adjectiveVillains')
-]);
+module.exports = require('./included/adjectiveHeroes').concat(
+	require('./included/adjectiveVillains'));

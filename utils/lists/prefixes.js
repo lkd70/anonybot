@@ -1,7 +1,6 @@
 'use strict';
 
-module.exports = [].concat.apply([], [
-  require('./included/prefixWeapons'),
-  require('./included/prefixHeroes'),
-  require('./included/prefixVillains')
-]);
+module.exports = require('./included/prefixWeapons').concat(
+	require('./included/prefixHeroes'),
+	require('./included/prefixVillains')
+);
