@@ -11,8 +11,8 @@ Example:
     \`/create AnonymousBoard101 A simple board with anonimity\``,
 
     create_success_message: (board, fake_name, uid) =>
-`Done!Your new board '*${board}*'
-is now ready
+`Done!
+Your new board '*${board}*' is now ready
 
 Your unique name is: '${fake_name}'
 Share your board with others using this unique ID: \`${uid}\`
@@ -30,7 +30,7 @@ Don't forget to make me an admin so I can manage this group!`,
 
 
     // commands/info.js
-    info_non_supergroup: `this is a supergroup only command. 
+    info_non_supergroup: `this is a supergroup only command.
 Ensure that you make this bot admin`,
 
     info_current_group: (boardUID, fake_name) =>
@@ -59,7 +59,7 @@ Your unique name is: '${fake_name}'`,
 
     join_in_use: `This group is already in use for another board.
 Please create a new group for a new board...`,
-    
+
 
 
 
@@ -83,7 +83,7 @@ Type /info for more`,
 
 
 
-    
+
 };
 
 module.exports = { EN };
