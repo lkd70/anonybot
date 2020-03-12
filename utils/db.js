@@ -21,7 +21,7 @@ const findUniqueName = (db, board_id) => new Promise(resolve => {
 	db.findOne({
 		boardUID: board_id,
 		fake_name: name
-	}, (__err, doc) => {
+	}, (_err, doc) => {
 		if (doc === null) {
 			resolve(name);
 		} else {
@@ -30,16 +30,25 @@ const findUniqueName = (db, board_id) => new Promise(resolve => {
 	});
 });
 
-const getMeFakeName = (db, group_id) => new Promise(resolve => {
+const getGroupById = (db, group_id) => new Promise(resolve => {
 	db.findOne({
 		group_id
-	}, (___err, doc) => {
+	}, (_err, doc) => {
 		resolve(doc);
+	});
+});
+
+const getBoardById = (db, uid) => new Promise(resolve => {
+	db.findOne({
+		uid
+	}, (_err, doc) => {
+		resolve(doc.settings);
 	});
 });
 
 module.exports = {
 	findNewBoardUID,
 	findUniqueName,
-	getMeFakeName,
+	getGroupById: getGroupById,
+	getBoardById: getBoardById,
 };
