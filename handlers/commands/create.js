@@ -2,6 +2,7 @@
 
 const { findNewBoardUID } = require('../../utils/db');
 const { getRandomName } = require('../../utils/names');
+const { settings } = require('../../config').defaults.boards;
 
 module.exports = () => ctx => {
 	if (ctx.update.message.chat.type === 'supergroup') {
@@ -23,7 +24,8 @@ module.exports = () => ctx => {
 							uid,
 							board,
 							desc,
-							creator: fake_name
+							creator: fake_name,
+							settings
 						}, () => {
 							ctx.db.groups.insert({
 								group_id,

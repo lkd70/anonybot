@@ -18,6 +18,7 @@ if ('locale' in process.env) {
 } else {
 	bot.context.strings = locale.EN;
 }
+bot.use(require('./handlers/middleware/parse_commands'));
 
 bot.help(commands.helpCommand());
 bot.start(commands.helpCommand());
