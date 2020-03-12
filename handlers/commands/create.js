@@ -1,8 +1,9 @@
 'use strict';
 
-const { findNewBoardUID } = require('../../utils/db');
 const { getRandomName } = require('../../utils/names');
 const { settings } = require('../../config').defaults.boards;
+const { addGroup, getGroup } = require('../../store/group');
+const { addBoard, getNewBoardId } = require('../../store/board');
 
 module.exports = () => ctx => {
 	if (ctx.update.message.chat.type === 'supergroup') {
@@ -14,30 +15,19 @@ module.exports = () => ctx => {
 			const desc = parts.join(' ');
 			const fake_name = getRandomName();
 
-			ctx.db.groups.findOne({
-				group_id
-			}, (_err, doc) => {
-				if (doc === null) {
-					// able to create group.
-					findNewBoardUID(ctx.db.boards).then(uid => {
-						ctx.db.boards.insert({
-							uid,
-							board,
-							desc,
-							creator: fake_name,
-							settings
-						}, () => {
-							ctx.db.groups.insert({
+			getGroup({ group_id }).then(group => {
+				if (group === null) {
+					getNewBoardId().then(uid => {
+						addBoard({ uid, board, desc, creator: fake_name, settings }).then(() => {
+							addGroup({
 								group_id,
 								owner: fake_name,
 								boardUID: uid
-							}, () => {
-								ctx.replyWithMarkdown(ctx.strings.create_success_message(
-									board,
-									fake_name,
-									uid
-								));
-							});
+							}).then(ctx.replyWithMarkdown(ctx.strings.create_success_message(
+								board,
+								fake_name,
+								uid
+							)));
 						});
 					});
 				} else {
