@@ -2,16 +2,9 @@
 require('dotenv').config();
 const Telegraf = require('telegraf');
 const commands = require('./handlers/commands');
-const Datastore = require('nedb');
 const locale = require('./locale');
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
-
-bot.context.db = {};
-bot.context.db.boards = new Datastore('./store/boards.db');
-bot.context.db.groups = new Datastore('./store/groups.db');
-bot.context.db.boards.loadDatabase();
-bot.context.db.groups.loadDatabase();
 
 if ('locale' in process.env) {
 	bot.context.strings = locale[process.env.locale];

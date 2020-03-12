@@ -1,5 +1,7 @@
 'use strict';
 
+const { getGroup } = require('../../store/group');
+
 const addedHandler = async (ctx, next) => {
 	const msg = ctx.message;
 
@@ -13,10 +15,8 @@ const addedHandler = async (ctx, next) => {
 	const members = await ctx.telegram.getChatMembersCount(msg.chat.id);
 
 	if (members === 2) {
-		ctx.db.groups.findOne({
-			group_id: msg.chat.id
-		}, (_err, doc) => {
-			if (doc === null) {
+		getGroup({group_id: msg.chat.id }).then(group => {
+			if (group === null) {
 				ctx.replyWithMarkdown(ctx.strings.help);
 			} else {
 				ctx.replyWithMarkdown(ctx.strings.added_back);

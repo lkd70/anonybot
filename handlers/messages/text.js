@@ -1,28 +1,39 @@
 'use strict';
 
 const Extra = require('telegraf/extra');
-const { getGroupById, getBoardById } = require('../../utils/db');
+const { getGroup, getGroups } = require('../../store/group');
+const { getBoard } = require('../../store/board');
 
 const processMessage = (ctx, next) => {
 	if (ctx.chat.type !== 'supergroup') return next();
 	ctx.telegram.deleteMessage(ctx.update.message.chat.id, ctx.update.message.message_id);
-	const message = ctx.update.message.text;
 	const group_id = ctx.update.message.chat.id;
+	const message = ctx.update.message.text;
 
-	getGroupById(ctx.db.groups, group_id).then(doc => {
-		const { owner, boardUID } = doc;
-		getBoardById(ctx.db.boards, boardUID).then(settings => {
-			if (settings.allow.text) {
-				ctx.db.groups.find({
+	getGroup({
+		group_id
+	}).then(group => {
+		const {
+			owner,
+			boardUID
+		} = group;
+		getBoard({
+			uid: boardUID
+		}).then(board => {
+			if (board.settings.allow.animations) {
+				getGroups({
 					boardUID
-				}, (_err, groupDocs) => groupDocs.forEach(group =>
+				}).then(groups => groups.forEach(g => {
 					ctx.telegram.sendMessage(
-						group.group_id,
-						`*[${owner}]* - ${message}`, Extra.markdown()
-					)));
+						g.group_id,
+						`*[${owner}]* - ${message}`,
+						Extra.markdown()
+					);
+				}));
 			}
 		});
 	});
+
 	return next();
 };
 

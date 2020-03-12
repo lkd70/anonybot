@@ -1,7 +1,8 @@
 'use strict';
 
 const Extra = require('telegraf/extra');
-const { getGroupById, getBoardById } = require('../../utils/db');
+const { getGroup, getGroups } = require('../../store/group');
+const { getBoard } = require('../../store/board');
 
 const processMessage = (ctx, next) => {
 	if (ctx.chat.type !== 'supergroup') return next();
@@ -9,25 +10,35 @@ const processMessage = (ctx, next) => {
 	const group_id = ctx.update.message.chat.id;
 	const sticker_id = ctx.update.message.sticker.file_id;
 
-	getGroupById(ctx.db.groups, group_id).then(doc => {
-		const { owner, boardUID } = doc;
-		getBoardById(ctx.db.boards, boardUID).then(settings => {
-			if (settings.allow.stickers) {
-				ctx.db.groups.find({
+	getGroup({
+		group_id
+	}).then(group => {
+		const {
+			owner,
+			boardUID
+		} = group;
+		getBoard({
+			uid: boardUID
+		}).then(board => {
+			if (board.settings.allow.animations) {
+				getGroups({
 					boardUID
-				}, (_err, groupDocs) => groupDocs.forEach(group =>
-					ctx.telegram.sendSticker(group.group_id, sticker_id).then(c => {
+				}).then(groups => groups.forEach(g => {
+					ctx.telegram.sendSticker(
+						g.group_id,
+						sticker_id
+					).then(c => {
 						ctx.telegram.sendMessage(
-							group.group_id,
+							g.group_id,
 							`From: ${owner}`,
 							Extra.inReplyTo(c.message_id)
 						);
-					})));
+					});
+				}));
 			}
-
 		});
-
 	});
+
 	return next();
 };
 

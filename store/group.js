@@ -33,6 +33,8 @@ const removeGroup = group => Group.remove(group);
 
 const getGroup = group => Group.findOne(group);
 
+const getGroups = group => Group.find(group);
+
 const getUniqueFakeName = board_id => new Promise(resolve => {
 	const fake_name = getRandomName();
 	getGroup({ boardUID: board_id, fake_name }).then(group => {
@@ -47,6 +49,7 @@ const getUniqueFakeName = board_id => new Promise(resolve => {
 module.exports = {
 	addGroup,
 	getGroup,
+	getGroups,
 	removeGroup,
 	updateGroup,
 	getUniqueFakeName,

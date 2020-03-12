@@ -1,7 +1,8 @@
 'use strict';
 
 const Extra = require('telegraf/extra');
-const { getGroupById, getBoardById } = require('../../utils/db');
+const { getGroup, getGroups } = require('../../store/group');
+const { getBoard } = require('../../store/board');
 
 const processMessage = (ctx, next) => {
 	if (ctx.chat.type !== 'supergroup') return next();
@@ -9,18 +10,17 @@ const processMessage = (ctx, next) => {
 	const group_id = ctx.update.message.chat.id;
 	const animation_id = ctx.update.message.animation.file_id;
 
-	getGroupById(ctx.db.groups, group_id).then(doc => {
-		const { owner, boardUID } = doc;
-		getBoardById(ctx.db.boards, boardUID).then(settings => {
-			if (settings.allow.animations) {
-				ctx.db.groups.find({
-					boardUID
-				}, (_err, groupDocs) => groupDocs.forEach(group =>
+	getGroup({ group_id }).then(group => {
+		const { owner, boardUID } = group;
+		getBoard({ uid: boardUID }).then(board => {
+			if (board.settings.allow.animations) {
+				getGroups({ boardUID }).then(groups => groups.forEach(g => {
 					ctx.telegram.sendAnimation(
-						group.group_id,
+						g.group_id,
 						animation_id,
 						Extra.caption(`From: ${owner}`)
-					)));
+					);
+				}));
 			}
 		});
 	});
