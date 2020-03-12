@@ -1,10 +1,10 @@
 const Telegraf = require('telegraf');
 const Extra = require('telegraf/extra');
 require('dotenv').config();
-const args = require('./middleware/args');
 const commands = require('./commands');
 const Datastore = require('nedb');
 const { getMeFakeName } = require('./utils/db');
+const locale = require('./locale');
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
@@ -14,7 +14,13 @@ bot.context.db.groups = new Datastore('./store/groups.db');
 bot.context.db.boards.loadDatabase();
 bot.context.db.groups.loadDatabase();
 
-bot.use(args());
+if (!('locale' in process.env)) {
+    bot.context.strings = locale.EN;
+} else {
+    bot.context.strings = locale[process.env.locale];
+}
+
+bot.use(require('./middleware'));
 
 bot.help(commands.helpCommand());
 bot.start(commands.helpCommand());
@@ -24,7 +30,7 @@ bot.command('join', commands.joinCommand());
 bot.command('info', commands.infoCommand());
 
 bot.on('text', ctx => {
-    ctx.deleteMessage().catch(() => ctx.reply('Make this bot admin to auto-manage messages: Requires `delete messages` permission'));
+    ctx.deleteMessage().catch(() => ctx.reply('Make this bot admin to auto-manage messages.'));
     const message = ctx.update.message.text;
     const group_id = ctx.update.message.chat.id;
     getMeFakeName(bot.context.db.groups, group_id).then(doc => {

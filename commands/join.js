@@ -6,16 +6,11 @@ const {
 
 module.exports = () => ctx => {
     if (!['group', 'supergroup'].includes(ctx.update.message.chat.type)) {
-        ctx.replyWithMarkdown('/join should only ever be used in a new empty group...');
+        ctx.replyWithMarkdown(ctx.strings.join_outside_supergroup);
     } else {
         const group_id = ctx.update.message.chat.id;
         if (ctx.state.command.args.length !== 1) {
-            ctx.replyWithMarkdown(
-                `Invalid syntax used for /join command...
-    correct syntax:
-    \t\t\`/join [board-hash]\`
-    Example:
-    \t\t\`/join 0934ec1ec2bc2b0483d37c17ccfd793a4d0a249c\``);
+            ctx.replyWithMarkdown(ctx.strings.join_syntax);
         } else {
             const [ hash ] = ctx.state.command.args;
 
@@ -25,7 +20,7 @@ module.exports = () => ctx => {
                 if (doc === null) {
                     ctx.db.boards.findOne({ uid: hash }, (err, boardDoc) => {
                         if (boardDoc === null) {
-                            ctx.replyWithMarkdown(`Unknown hash... Perhaps /create your own?`);
+                            ctx.replyWithMarkdown(ctx.strings.join_unknown_group);
                         } else {
                             findUniqueName(ctx.db.groups, hash).then(fake_name => {
                                 ctx.db.groups.insert({
@@ -33,16 +28,15 @@ module.exports = () => ctx => {
                                     owner: fake_name,
                                     boardUID: hash
                                 }, (err, newGroup) => {
-                                    ctx.replyWithMarkdown(`Welcome to '*${boardDoc.board}*'` +
-                                        `\n\nYour unique name is: '${fake_name}'`);
+                                    ctx.replyWithMarkdown(ctx.strings.join_success(
+                                        boardDoc.board,
+                                        fake_name));
                                 });
                             });
                         }
                     });
                 } else {
-                    // group is already in use
-                    ctx.replyWithMarkdown(`This group is already in use for another board.` +
-                    `Please create a new group for a new board...`);
+                    ctx.replyWithMarkdown(ctx.strings.join_in_use);
                 }
             });
         }
