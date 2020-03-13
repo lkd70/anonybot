@@ -2,7 +2,7 @@
 
 const { getGroup } = require('../../store/group');
 
-module.exports = () => ctx => {
+module.exports = ctx => {
 	if (ctx.update.message.chat.type === 'supergroup') {
 		const group_id = ctx.update.message.chat.id;
 		getGroup({ group_id }).then(group => {

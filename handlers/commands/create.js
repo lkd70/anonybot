@@ -5,7 +5,7 @@ const { settings } = require('../../config').defaults.boards;
 const { addGroup, getGroup } = require('../../store/group');
 const { addBoard, getNewBoardId } = require('../../store/board');
 
-module.exports = () => ctx => {
+module.exports = ctx => {
 	if (ctx.update.message.chat.type === 'supergroup') {
 		const group_id = ctx.update.message.chat.id;
 		if (ctx.state.command.args.length < 2) {

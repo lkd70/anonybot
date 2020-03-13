@@ -3,7 +3,7 @@
 const { getGroup, getUniqueFakeName, addGroup } = require('../../store/group');
 const { getBoard } = require('../../store/board');
 
-module.exports = () => ctx => {
+module.exports = ctx => {
 	if (ctx.update.message.chat.type === 'supergroup') {
 		const group_id = ctx.update.message.chat.id;
 		if (ctx.state.command.args.length === 1) {
