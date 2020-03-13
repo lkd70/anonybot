@@ -33,7 +33,7 @@ const removeBoard = board => Board.remove(board);
 
 const getBoard = board => Board.findOne(board);
 
-const getNewBoardId = db => new Promise(resolve => {
+const getNewBoardId = () => new Promise(resolve => {
 	const uid = crypto.randomBytes(20).toString('hex');
 	Board.findOne({ uid }).then(res => resolve(res === null ? uid : getNewBoardId));
 });
