@@ -1,13 +1,13 @@
 'use strict';
 
-const helpCommand = require('./help');
-const createCommand = require('./create');
-const joinCommand = require('./join');
-const infoCommand = require('./info');
+const {	Composer } = require('telegraf');
 
-module.exports = {
-	helpCommand,
-	createCommand,
-	joinCommand,
-	infoCommand,
-};
+const composer = new Composer();
+
+composer.start(require('./help'));
+composer.help(require('./help'));
+composer.command('create', require('./create'));
+composer.command('join', require('./join'));
+composer.command('info', require('./info'));
+
+module.exports = composer;

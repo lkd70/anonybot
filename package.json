@@ -2,7 +2,7 @@
   "name": "anonybot",
   "version": "0.1.0",
   "description": "A telegram bot for unlimited anonymous groups",
-  "main": "index.js",
+  "main": "bot.js",
   "dependencies": {
     "dotenv": "^8.2.0",
     "nedb-promise": "^2.0.1",
@@ -12,8 +12,16 @@
     "nodemon": "^2.0.2"
   },
   "scripts": {
+    "start": "node bot.js",
     "test": "nodemon bot.js"
   },
-  "author": "LKD70",
+  "keywords": [
+    "telegram",
+    "bot",
+    "anonymous",
+    "anon",
+    "private"
+  ],
+  "author": "LKD70 <dev@lkd70.io> (https://lkd70.io)",
   "license": "AGPL-3.0"
 }
